@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b12">
+  <meta name="description" content="NEXORA — entertainment and personal assistant platform. Music discovery, artwork, and more.">
+  <title>NEXORA</title>
+  <style>
+    :root {
+      --bg: #0b0b12;
+      --bg-soft: #14141f;
+      --card: #1a1a28;
+      --text: #f5f5fa;
+      --muted: #9a9ab0;
+      --accent: #7c5cff;
+      --accent-2: #22d3ee;
+      --border: #26263a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #1b1636 0%, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-tap-highlight-color: transparent;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px 8px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      font-size: 18px;
+    }
+    .brand-mark {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid; place-items: center;
+      font-size: 16px; font-weight: 800;
+      color: #0b0b12;
+    }
+    .badge {
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.06em;
+    }
+    main {
+      flex: 1;
+      padding: 24px 20px 40px;
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .hero {
+      padding: 32px 0 28px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .search-bar {
+      margin-top: 26px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 16px;
+    }
+    .search-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 15px;
+    }
+    .search-bar input::placeholder { color: var(--muted); }
+    .mic {
+      width: 36px; height: 36px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      color: var(--text);
+      display: grid; place-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .mic:active { background: var(--accent); }
+    .note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .shelves {
+      margin-top: 34px;
+    }
+    .shelves h2 {
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .shelf-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (min-width: 520px) {
+      .shelf-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .shelf-card {
+      background: linear-gradient(180deg, #1f1a3a, #17141f);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 14px;
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .shelf-card strong {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .shelf-card small {
+      color: var(--muted);
+      font-size: 11.5px;
+      margin-top: 6px;
+      display: block;
+    }
+    .status {
+      margin-top: 32px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .status strong { color: var(--text); }
+    footer {
+      text-align: center;
+      padding: 22px 20px 34px;
+      font-size: 11.5px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <span>NEXORA</span>
+    </div>
+    <div class="badge">v0.1 · FOUNDATION</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Music discovery.<br><span>Your assistant.</span></h1>
+      <p>NEXORA is an all-in-one entertainment and personal assistant platform — built for your phone, moving to the world.</p>
+
+      <div class="search-bar">
+        <input type="search" id="searchInput" placeholder="Search songs, artists, albums…" aria-label="Search music" />
+        <button class="mic" id="micBtn" type="button" aria-label="Voice search">🎙</button>
+      </div>
+      <div class="note">Search and voice are coming online in the next builds.</div>
+    </section>
+
+    <section class="shelves">
+      <h2>Discovery</h2>
+      <div class="shelf-grid">
+        <div class="shelf-card"><strong>African & Kenyan</strong><small>Afrobeats, gengetone, East African</small></div>
+        <div class="shelf-card"><strong>Independent</strong><small>New releases from Jamendo</small></div>
+        <div class="shelf-card"><strong>International</strong><small>Global hits & catalogue</small></div>
+        <div class="shelf-card"><strong>Artwork</strong><small>Album art for your wallpaper</small></div>
+        <div class="shelf-card"><strong>Voice</strong><small>Speak to search & navigate</small></div>
+        <div class="shelf-card"><strong>Assistant</strong><small>AI features — coming later</small></div>
+      </div>
+    </section>
+
+    <div class="status">
+      <strong>Status:</strong> NEXORA Foundation v0.1 — static shell deployed. No music providers connected yet. Music search, artwork, and voice will be added in the next stages.
+    </div>
+  </main>
+
+  <footer>
+    NEXORA © 2026 · Built for phones · Music discovery first, assistant next
+  </footer>
+</body>
+</html>
