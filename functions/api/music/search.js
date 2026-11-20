@@ -21,6 +21,7 @@ export async function onRequestGet({ request, env }) {
       providerUrl: item.trackViewUrl || item.collectionViewUrl || "https://music.apple.com/",
       kind: "mainstream"
     }));
+    
     // Jamendo is optional. Add its independent catalogue only after the owner
     // supplies a Jamendo API client ID and accepts the provider's licence terms.
     if (env.JAMENDO_CLIENT_ID) {
