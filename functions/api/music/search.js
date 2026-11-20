@@ -13,7 +13,7 @@ export async function onRequestGet({ request, env }) {
   if (!q) return json({ results: [], message: "Enter a song, artist or album." });
   
   try {
-    // 1. Fetch from Deezer (Free, no API key, reliable on Cloudflare)
+    // 1. Fetch from Deezer (Mainstream)
     const deezerUrl = new URL("https://api.deezer.com/search");
     deezerUrl.search = new URLSearchParams({ q: q, limit: "18" });
     
@@ -21,11 +21,10 @@ export async function onRequestGet({ request, env }) {
       headers: { "User-Agent": "NEXORA/0.2 (music discovery)" }
     });
     
-    if (!response.ok) throw new Error("Music catalogue is temporarily unavailable.");
+    if (!response.ok) throw new Error("Deezer catalogue is temporarily unavailable.");
     
     const data = await response.json();
     
-    // 2. Map Deezer results to our standard format
     const results = (data.data || []).map((item) => ({
       id: String(item.id),
       title: item.title,
@@ -38,7 +37,7 @@ export async function onRequestGet({ request, env }) {
       kind: "mainstream"
     }));
     
-    // 3. Optional Jamendo integration (only runs if you add the key later)
+    // 2. Fetch from Jamendo (Independent)
     if (env.JAMENDO_CLIENT_ID) {
       const jamendoUrl = new URL("https://api.jamendo.com/v3.0/tracks/");
       jamendoUrl.search = new URLSearchParams({ 
@@ -49,23 +48,35 @@ export async function onRequestGet({ request, env }) {
         include: "musicinfo", 
         audioformat: "mp31" 
       });
-      const jr = await fetch(jamendoUrl);
+      
+      // CRITICAL FIX: Jamendo requires a standard browser User-Agent!
+      const jr = await fetch(jamendoUrl, {
+        headers: { 
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 
+        }
+      });
       
       if (jr.ok) {
         const jd = await jr.json();
-        for (const item of jd.results || []) {
-          results.push({
-            id: "jamendo-" + item.id, 
-            title: item.name, 
-            artist: item.artist_name,
-            album: item.album_name || "", 
-            artwork: item.album_image || item.image || "",
-            preview: item.audio || null, 
-            provider: "Jamendo (independent)",
-            providerUrl: item.shareurl || "https://www.jamendo.com/", 
-            kind: "independent",
-            license: item.license_ccurl || null
-          });
+        
+        // If Jamendo returns an error inside the JSON, we skip it safely
+        if (jd.headers && jd.headers.status === "failed") {
+          console.error("Jamendo Error:", jd.headers.error_message);
+        } else {
+          for (const item of jd.results || []) {
+            results.push({
+              id: "jamendo-" + item.id, 
+              title: item.name, 
+              artist: item.artist_name,
+              album: item.album_name || "", 
+              artwork: item.album_image || item.image || "",
+              preview: item.audio || null, 
+              provider: "Jamendo (independent)",
+              providerUrl: item.shareurl || "https://www.jamendo.com/", 
+              kind: "independent",
+              license: item.license_ccurl || null
+            });
+          }
         }
       }
     }
