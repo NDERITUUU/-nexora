@@ -3,13 +3,30 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), { status
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const q = (url.searchParams.get("q") || "").trim().slice(0, 100);
+  
   if (!q) return json({ results: [], message: "Enter a song, artist or album." });
+  
   try {
     const itunesUrl = new URL("https://itunes.apple.com/search");
     itunesUrl.search = new URLSearchParams({ term: q, entity: "song", limit: "18" });
-    const response = await fetch(itunesUrl, { headers: { "User-Agent": "NEXORA/0.2 (music discovery)" } });
+    
+    // Use a standard browser User-Agent to prevent Apple from blocking the request
+    const headers = { 
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 
+    };
+    
+    let response = await fetch(itunesUrl, { headers });
+    
+    // If Apple rate-limits us (403 or 429), wait 1 second and retry once
+    if (!response.ok) {
+      await new Promise(r => setTimeout(r, 1000));
+      response = await fetch(itunesUrl, { headers });
+    }
+    
     if (!response.ok) throw new Error("Music catalogue is temporarily unavailable.");
+    
     const data = await response.json();
+    
     const results = (data.results || []).map((item) => ({
       id: String(item.trackId),
       title: item.trackName,
@@ -28,6 +45,7 @@ export async function onRequestGet({ request, env }) {
       const jamendoUrl = new URL("https://api.jamendo.com/v3.0/tracks/");
       jamendoUrl.search = new URLSearchParams({ client_id: env.JAMENDO_CLIENT_ID, format: "json", limit: "12", search: q, include: "musicinfo", audioformat: "mp31" });
       const jr = await fetch(jamendoUrl);
+      
       if (jr.ok) {
         const jd = await jr.json();
         for (const item of jd.results || []) results.push({
@@ -39,7 +57,9 @@ export async function onRequestGet({ request, env }) {
         });
       }
     }
+    
     return json({ results, count: results.length });
+    
   } catch (error) {
     return json({ results: [], error: error.message || "Search failed. Please try again." }, 502);
   }
