@@ -1,4 +1,10 @@
-const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=300" } });
+const json = (data, status = 200) => new Response(JSON.stringify(data), { 
+  status, 
+  headers: { 
+    "content-type": "application/json; charset=utf-8", 
+    "cache-control": "public, max-age=300" 
+  } 
+});
 
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
@@ -7,54 +13,60 @@ export async function onRequestGet({ request, env }) {
   if (!q) return json({ results: [], message: "Enter a song, artist or album." });
   
   try {
-    const itunesUrl = new URL("https://itunes.apple.com/search");
-    itunesUrl.search = new URLSearchParams({ term: q, entity: "song", limit: "18" });
+    // 1. Fetch from Deezer (Free, no API key, reliable on Cloudflare)
+    const deezerUrl = new URL("https://api.deezer.com/search");
+    deezerUrl.search = new URLSearchParams({ q: q, limit: "18" });
     
-    // Use a standard browser User-Agent to prevent Apple from blocking the request
-    const headers = { 
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 
-    };
-    
-    let response = await fetch(itunesUrl, { headers });
-    
-    // If Apple rate-limits us (403 or 429), wait 1 second and retry once
-    if (!response.ok) {
-      await new Promise(r => setTimeout(r, 1000));
-      response = await fetch(itunesUrl, { headers });
-    }
+    const response = await fetch(deezerUrl, {
+      headers: { "User-Agent": "NEXORA/0.2 (music discovery)" }
+    });
     
     if (!response.ok) throw new Error("Music catalogue is temporarily unavailable.");
     
     const data = await response.json();
     
-    const results = (data.results || []).map((item) => ({
-      id: String(item.trackId),
-      title: item.trackName,
-      artist: item.artistName,
-      album: item.collectionName || "",
-      artwork: (item.artworkUrl100 || "").replace("100x100bb", "600x600bb"),
-      preview: item.previewUrl || null,
-      provider: "Apple Music catalogue",
-      providerUrl: item.trackViewUrl || item.collectionViewUrl || "https://music.apple.com/",
+    // 2. Map Deezer results to our standard format
+    const results = (data.data || []).map((item) => ({
+      id: String(item.id),
+      title: item.title,
+      artist: item.artist.name,
+      album: item.album.title || "",
+      artwork: item.album.cover_xl || item.album.cover_big || "",
+      preview: item.preview || null,
+      provider: "Deezer",
+      providerUrl: item.link || "https://www.deezer.com/",
       kind: "mainstream"
     }));
     
-    // Jamendo is optional. Add its independent catalogue only after the owner
-    // supplies a Jamendo API client ID and accepts the provider's licence terms.
+    // 3. Optional Jamendo integration (only runs if you add the key later)
     if (env.JAMENDO_CLIENT_ID) {
       const jamendoUrl = new URL("https://api.jamendo.com/v3.0/tracks/");
-      jamendoUrl.search = new URLSearchParams({ client_id: env.JAMENDO_CLIENT_ID, format: "json", limit: "12", search: q, include: "musicinfo", audioformat: "mp31" });
+      jamendoUrl.search = new URLSearchParams({ 
+        client_id: env.JAMENDO_CLIENT_ID, 
+        format: "json", 
+        limit: "12", 
+        search: q, 
+        include: "musicinfo", 
+        audioformat: "mp31" 
+      });
       const jr = await fetch(jamendoUrl);
       
       if (jr.ok) {
         const jd = await jr.json();
-        for (const item of jd.results || []) results.push({
-          id: "jamendo-" + item.id, title: item.name, artist: item.artist_name,
-          album: item.album_name || "", artwork: item.album_image || item.image || "",
-          preview: item.audio || null, provider: "Jamendo (independent)",
-          providerUrl: item.shareurl || "https://www.jamendo.com/", kind: "independent",
-          license: item.license_ccurl || null
-        });
+        for (const item of jd.results || []) {
+          results.push({
+            id: "jamendo-" + item.id, 
+            title: item.name, 
+            artist: item.artist_name,
+            album: item.album_name || "", 
+            artwork: item.album_image || item.image || "",
+            preview: item.audio || null, 
+            provider: "Jamendo (independent)",
+            providerUrl: item.shareurl || "https://www.jamendo.com/", 
+            kind: "independent",
+            license: item.license_ccurl || null
+          });
+        }
       }
     }
     
