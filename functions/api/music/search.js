@@ -2,7 +2,7 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status, 
   headers: { 
     "content-type": "application/json; charset=utf-8", 
-    "cache-control": "public, max-age=300" 
+    "cache-control": "no-cache" // Temporarily disable caching for debugging
   } 
 });
 
@@ -13,15 +13,13 @@ export async function onRequestGet({ request, env }) {
   if (!q) return json({ results: [], message: "Enter a song, artist or album." });
   
   try {
-    // 1. Fetch from Deezer (Mainstream)
+    // 1. Deezer
     const deezerUrl = new URL("https://api.deezer.com/search");
     deezerUrl.search = new URLSearchParams({ q: q, limit: "18" });
     
     const response = await fetch(deezerUrl, {
-      headers: { "User-Agent": "NEXORA/0.2 (music discovery)" }
+      headers: { "User-Agent": "NEXORA/0.2" }
     });
-    
-    if (!response.ok) throw new Error("Deezer catalogue is temporarily unavailable.");
     
     const data = await response.json();
     
@@ -37,8 +35,11 @@ export async function onRequestGet({ request, env }) {
       kind: "mainstream"
     }));
     
-    // 2. Fetch from Jamendo (Independent)
+    // 2. Jamendo
+    let jamendoDebug = "Not started";
+    
     if (env.JAMENDO_CLIENT_ID) {
+      jamendoDebug = "Key found: " + env.JAMENDO_CLIENT_ID;
       const jamendoUrl = new URL("https://api.jamendo.com/v3.0/tracks/");
       jamendoUrl.search = new URLSearchParams({ 
         client_id: env.JAMENDO_CLIENT_ID, 
@@ -49,20 +50,18 @@ export async function onRequestGet({ request, env }) {
         audioformat: "mp31" 
       });
       
-      // CRITICAL FIX: Jamendo requires a standard browser User-Agent!
       const jr = await fetch(jamendoUrl, {
         headers: { 
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" 
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36" 
         }
       });
       
       if (jr.ok) {
         const jd = await jr.json();
-        
-        // If Jamendo returns an error inside the JSON, we skip it safely
         if (jd.headers && jd.headers.status === "failed") {
-          console.error("Jamendo Error:", jd.headers.error_message);
+          jamendoDebug = "Jamendo Rejected: " + jd.headers.error_message;
         } else {
+          jamendoDebug = "Success! Found " + (jd.results ? jd.results.length : 0) + " tracks.";
           for (const item of jd.results || []) {
             results.push({
               id: "jamendo-" + item.id, 
@@ -78,12 +77,16 @@ export async function onRequestGet({ request, env }) {
             });
           }
         }
+      } else {
+        jamendoDebug = "HTTP Error: " + jr.status;
       }
+    } else {
+      jamendoDebug = "ERROR: JAMENDO_CLIENT_ID is missing from Cloudflare Variables!";
     }
     
-    return json({ results, count: results.length });
+    return json({ results, count: results.length, jamendo_debug: jamendoDebug });
     
   } catch (error) {
-    return json({ results: [], error: error.message || "Search failed. Please try again." }, 502);
+    return json({ results: [], error: error.message }, 500);
   }
 }
