@@ -19,9 +19,45 @@ main{max-width:900px;margin:auto;padding:24px 20px 50px}.hero{text-align:center;
 h2{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:32px 0 14px}.shelves{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.shelf{background:linear-gradient(150deg,#211d3c,#171522);border:1px solid var(--line);border-radius:15px;padding:17px}.shelf b{font-size:14px}.shelf p{font-size:12px;color:var(--muted);margin:7px 0 0;line-height:1.4}
 .results{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:13px}.track{overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:15px}.track img{width:100%;aspect-ratio:1;object-fit:cover;background:#242238}.track-body{padding:12px}.track h3{font-size:14px;margin:0 0 5px}.track p{font-size:12px;color:var(--muted);margin:0 0 10px}.track a{display:inline-block;color:#c7bcff;font-size:12px;text-decoration:none;margin:4px 10px 2px 0}.track audio{width:100%;height:34px;margin-top:8px}.status{margin-top:30px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;color:var(--muted);font-size:12px;line-height:1.6}.status strong{color:var(--text)}footer{text-align:center;padding:22px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)}
 @media(min-width:600px){.shelves{grid-template-columns:repeat(3,1fr)}}
+
+/* INSTALL BANNER STYLES */
+#installBanner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--panel);
+  border-top: 1px solid var(--accent);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in-out;
+}
+#installBanner.show { transform: translateY(0); }
+#installBanner .text { font-size: 14px; font-weight: 600; }
+#installBanner .subtext { font-size: 11px; color: var(--muted); margin-top: 4px; }
+#installBanner .actions { display: flex; gap: 10px; }
+#installBanner button { padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; }
+#installBtn { background: var(--accent); color: white; }
+#dismissBtn { background: transparent; color: var(--muted); }
 </style>
 </head>
 <body>
+
+<!-- INSTALL BANNER HTML -->
+<div id="installBanner">
+  <div>
+    <div class="text">Install NEXORA</div>
+    <div class="subtext">Add to home screen for the app experience.</div>
+  </div>
+  <div class="actions">
+    <button id="dismissBtn">Not now</button>
+    <button id="installBtn">Install</button>
+  </div>
+</div>
+
 <header><div class="brand"><div class="mark">N</div>NEXORA</div><div class="badge">MUSIC DISCOVERY · 0.2</div></header>
 <main>
 <section class="hero">
@@ -44,6 +80,7 @@ h2{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted
 </main>
 <footer>NEXORA © 2026 · Built for phones · Music discovery first</footer>
 <script>
+// --- SEARCH LOGIC ---
 const form=document.getElementById('searchForm'),input=document.getElementById('searchInput'),message=document.getElementById('message'),resultsBox=document.getElementById('results'),section=document.getElementById('resultsSection');
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function render(items){
@@ -76,7 +113,44 @@ document.getElementById('micBtn').addEventListener('click',()=>{
  message.textContent='Listening…';recognition.onresult=e=>{input.value=e.results[0][0].transcript;form.requestSubmit();};recognition.onerror=()=>message.textContent='Voice search could not start. Check microphone permission.';recognition.onend=()=>{if(message.textContent==='Listening…')message.textContent='';};recognition.start();
 });
 
-// PWA Service Worker Registration
+// --- PWA INSTALL BANNER LOGIC ---
+let deferredPrompt;
+const banner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+const dismissBtn = document.getElementById('dismissBtn');
+
+// Check if the app is already installed
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  banner.style.display = 'none';
+}
+
+// Listen for the browser telling us the app is installable
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); // Prevent Chrome's default mini-infobar
+  deferredPrompt = e;
+  
+  // Show our custom banner after a short 3-second delay
+  setTimeout(() => {
+    banner.classList.add('show');
+  }, 3000);
+});
+
+// When the user clicks "Install" on our banner
+installBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    banner.classList.remove('show');
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  }
+});
+
+// When the user clicks "Not now"
+dismissBtn.addEventListener('click', () => {
+  banner.classList.remove('show');
+});
+
+// Register Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed', err));
