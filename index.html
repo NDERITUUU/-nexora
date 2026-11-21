@@ -17,44 +17,40 @@ header{max-width:900px;margin:auto;padding:20px;display:flex;justify-content:spa
 main{max-width:900px;margin:auto;padding:24px 20px 50px}.hero{text-align:center;padding:28px 0}.hero h1{font-size:clamp(30px,6vw,48px);line-height:1.08;margin:0 0 14px}.gradient{background:linear-gradient(120deg,var(--accent),var(--cyan));background-clip:text;color:transparent}.hero p{max-width:560px;margin:auto;color:var(--muted);line-height:1.6}
 .search{display:flex;gap:9px;margin:26px auto 10px;max-width:650px;padding:9px;background:var(--panel);border:1px solid var(--line);border-radius:16px}.search input{min-width:0;flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:16px;padding:8px}.search button,.action{border:0;border-radius:11px;padding:11px 15px;background:linear-gradient(120deg,var(--accent),#5e9cff);color:white;font-weight:700;cursor:pointer}.search .mic{padding:10px 13px;background:#28253c}.hint,#message{font-size:12px;color:var(--muted);text-align:center;min-height:20px}
 h2{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:32px 0 14px}.shelves{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.shelf{background:linear-gradient(150deg,#211d3c,#171522);border:1px solid var(--line);border-radius:15px;padding:17px}.shelf b{font-size:14px}.shelf p{font-size:12px;color:var(--muted);margin:7px 0 0;line-height:1.4}
-.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:13px}.track{overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:15px}.track img{width:100%;aspect-ratio:1;object-fit:cover;background:#242238}.track-body{padding:12px}.track h3{font-size:14px;margin:0 0 5px}.track p{font-size:12px;color:var(--muted);margin:0 0 10px}.track a{display:inline-block;color:#c7bcff;font-size:12px;text-decoration:none;margin:4px 10px 2px 0}.track audio{width:100%;height:34px;margin-top:8px}.status{margin-top:30px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;color:var(--muted);font-size:12px;line-height:1.6}.status strong{color:var(--text)}footer{text-align:center;padding:22px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)}
+.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:13px}.track{overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:15px}.track img{width:100%;aspect-ratio:1;object-fit:cover;background:#242238;cursor:pointer;transition:opacity 0.2s}.track img:active{opacity:0.7}.track-body{padding:12px}.track h3{font-size:14px;margin:0 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track p{font-size:12px;color:var(--muted);margin:0 0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track a{display:inline-block;color:#c7bcff;font-size:12px;text-decoration:none;margin:4px 10px 2px 0}.track audio{width:100%;height:34px;margin-top:8px}.status{margin-top:30px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;color:var(--muted);font-size:12px;line-height:1.6}.status strong{color:var(--text)}footer{text-align:center;padding:22px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)}
 @media(min-width:600px){.shelves{grid-template-columns:repeat(3,1fr)}}
 
 /* INSTALL BANNER STYLES */
-#installBanner {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--panel);
-  border-top: 1px solid var(--accent);
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
-  box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-  transform: translateY(100%);
-  transition: transform 0.3s ease-in-out;
-}
-#installBanner.show { transform: translateY(0); }
-#installBanner .text { font-size: 14px; font-weight: 600; }
-#installBanner .subtext { font-size: 11px; color: var(--muted); margin-top: 4px; }
-#installBanner .actions { display: flex; gap: 10px; }
-#installBanner button { padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; }
-#installBtn { background: var(--accent); color: white; }
-#dismissBtn { background: transparent; color: var(--muted); }
+#installBanner {position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--accent);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;z-index:1000;box-shadow:0 -5px 20px rgba(0,0,0,0.5);transform:translateY(100%);transition:transform 0.3s ease-in-out}
+#installBanner.show{transform:translateY(0)}#installBanner .text{font-size:14px;font-weight:600}#installBanner .subtext{font-size:11px;color:var(--muted);margin-top:4px}#installBanner .actions{display:flex;gap:10px}#installBanner button{padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;border:none}#installBtn{background:var(--accent);color:white}#dismissBtn{background:transparent;color:var(--muted)}
+
+/* WALLPAPER MODAL STYLES */
+#wallpaperModal {position:fixed;inset:0;background:rgba(11,11,18,0.95);backdrop-filter:blur(5px);z-index:2000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity 0.3s}
+#wallpaperModal.show{display:flex;opacity:1}
+#wallpaperModal img{max-width:100%;max-height:60vh;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.5);margin-bottom:20px;object-fit:contain}
+#wallpaperModal .modal-actions{display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px}
+#wallpaperModal a.btn-download{display:block;text-align:center;background:var(--accent);color:white;text-decoration:none;padding:14px;border-radius:12px;font-weight:700}
+#wallpaperModal button.btn-close{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:14px;border-radius:12px;font-weight:700;cursor:pointer}
+#wallpaperModal .instructions{color:var(--muted);font-size:12px;text-align:center;margin-top:10px;line-height:1.5}
 </style>
 </head>
 <body>
 
-<!-- INSTALL BANNER HTML -->
+<!-- INSTALL BANNER -->
 <div id="installBanner">
-  <div>
-    <div class="text">Install NEXORA</div>
-    <div class="subtext">Add to home screen for the app experience.</div>
+  <div><div class="text">Install NEXORA</div><div class="subtext">Add to home screen for the app experience.</div></div>
+  <div class="actions"><button id="dismissBtn">Not now</button><button id="installBtn">Install</button></div>
+</div>
+
+<!-- WALLPAPER MODAL -->
+<div id="wallpaperModal">
+  <img id="modalImage" src="" alt="Album Artwork">
+  <div class="modal-actions">
+    <a id="modalDownload" class="btn-download" href="#" target="_blank" download="nexora-artwork.jpg">Download Image</a>
+    <button id="modalClose" class="btn-close">Close</button>
   </div>
-  <div class="actions">
-    <button id="dismissBtn">Not now</button>
-    <button id="installBtn">Install</button>
+  <div class="instructions">
+    <strong>Android Tip:</strong> Tap "Download Image". Then open your phone's Gallery or Photos app, open the image, tap the 3 dots, and select "Set as wallpaper".
   </div>
 </div>
 
@@ -82,14 +78,32 @@ h2{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted
 <script>
 // --- SEARCH LOGIC ---
 const form=document.getElementById('searchForm'),input=document.getElementById('searchInput'),message=document.getElementById('message'),resultsBox=document.getElementById('results'),section=document.getElementById('resultsSection');
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+const modal=document.getElementById('wallpaperModal'), modalImg=document.getElementById('modalImage'), modalDownload=document.getElementById('modalDownload'), modalClose=document.getElementById('modalClose');
+
+function openWallpaper(url) {
+  if(!url) return;
+  modalImg.src = url;
+  modalDownload.href = url;
+  // Force download by trying to fetch as blob (browser dependent)
+  modal.classList.add('show');
+}
+
+modalClose.addEventListener('click', () => {
+  modal.classList.remove('show');
+  modalImg.src = '';
+});
+
 function render(items){
  resultsBox.innerHTML='';
  if(!items.length){message.textContent='No results found. Try another artist or song.';section.hidden=true;return;}
  section.hidden=false;
  for(const t of items){
   const card=document.createElement('article');card.className='track';
+  
   const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=t.artwork||'';
+  // Add click event for Wallpaper Modal
+  if(t.artwork) { img.addEventListener('click', () => openWallpaper(t.artwork)); }
+  
   const body=document.createElement('div');body.className='track-body';
   const title=document.createElement('h3');title.textContent=t.title||'Untitled';
   const artist=document.createElement('p');artist.textContent=(t.artist||'Unknown artist')+(t.album?' · '+t.album:'');
@@ -118,43 +132,17 @@ let deferredPrompt;
 const banner = document.getElementById('installBanner');
 const installBtn = document.getElementById('installBtn');
 const dismissBtn = document.getElementById('dismissBtn');
-
-// Check if the app is already installed
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  banner.style.display = 'none';
-}
-
-// Listen for the browser telling us the app is installable
+if (window.matchMedia('(display-mode: standalone)').matches) { banner.style.display = 'none'; }
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault(); // Prevent Chrome's default mini-infobar
-  deferredPrompt = e;
-  
-  // Show our custom banner after a short 3-second delay
-  setTimeout(() => {
-    banner.classList.add('show');
-  }, 3000);
+  e.preventDefault(); deferredPrompt = e;
+  setTimeout(() => { banner.classList.add('show'); }, 3000);
 });
-
-// When the user clicks "Install" on our banner
 installBtn.addEventListener('click', async () => {
-  if (deferredPrompt) {
-    banner.classList.remove('show');
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-  }
+  if (deferredPrompt) { banner.classList.remove('show'); deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; }
 });
-
-// When the user clicks "Not now"
-dismissBtn.addEventListener('click', () => {
-  banner.classList.remove('show');
-});
-
-// Register Service Worker
+dismissBtn.addEventListener('click', () => { banner.classList.remove('show'); });
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed', err));
-  });
+  window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed', err)); });
 }
 </script>
 </body>
