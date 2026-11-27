@@ -1,32 +1,42 @@
 # NEXORA
 
-NEXORA is a mobile-first music discovery and personal assistant foundation.
+NEXORA is a mobile-first music discovery progressive web app (PWA).
 
-## Current build (0.2)
-- Live music search through the Apple iTunes Search catalogue.
-- Artwork, artist and album metadata.
-- Short preview clips where the provider supplies them.
-- Links to the authorised provider page for full listening.
+## Included in this release
+- Mobile-first music discovery and search interface.
+- Deezer catalogue search, album artwork and previews where supplied.
 - Optional Jamendo independent catalogue integration.
-- Browser voice search (where supported).
-- Downloadable artwork for the user to set as wallpaper manually.
+- Optional Cloudflare KV caching for search.
+- Daily discovery API endpoint and scheduled music-refresh Worker.
+- Kenya/East Africa, Afrobeats, hip-hop, R&B, gospel and global-pop discovery shortcuts.
+- Browser voice search where supported.
+- PWA installation and improved offline app-shell caching.
+- User-controlled artwork download.
 
-## Deploy on Cloudflare Pages
-1. Connect this repository to Cloudflare Pages (or let the existing Pages project deploy from GitHub).
-2. Keep the `functions/` directory at the repository root. Cloudflare Pages automatically detects Pages Functions there.
-3. Deploy. The search endpoint is `/api/music/search?q=...`.
+## Cloudflare Pages configuration
+1. Keep this repository connected to your Cloudflare Pages project. GitHub pushes trigger a new Pages deployment.
+2. In Cloudflare Dashboard → Workers & Pages → KV, create a KV namespace named **NEXORA_KV**.
+3. In Pages → NEXORA project → Settings → Functions → KV namespace bindings, add binding **NEXORA_KV** and select that namespace.
+4. Optional: set **JAMENDO_CLIENT_ID** as a Pages environment variable only after checking Jamendo's current API and commercial-use terms.
+5. Redeploy the Pages project after adding bindings.
 
-## Optional independent music catalogue
-1. Create an application at https://devportal.jamendo.com.
-2. Review Jamendo's API and track-specific Creative Commons licence terms.
-3. Add `JAMENDO_CLIENT_ID` as an environment variable/secret in the Cloudflare Pages project.
-4. Redeploy.
+## Enable the daily music refresh
+The scheduled Worker source is `workers/music-refresh.js`; its schedule is in `wrangler.music-refresh.toml`.
+1. Copy the KV namespace ID from the namespace created above.
+2. Replace `REPLACE_WITH_YOUR_CLOUDFLARE_KV_NAMESPACE_ID` in `wrangler.music-refresh.toml` with the actual ID.
+3. Deploy the Worker from a computer with Wrangler installed: `npx wrangler deploy --config wrangler.music-refresh.toml`.
+4. Confirm the Worker has the **NEXORA_KV** binding pointing to the same KV namespace.
+5. The cron runs daily at **04:37 UTC (07:37 East Africa Time)**. The daily shelf populates after the first successful run.
+6. Confirm `/api/music/discover` returns a non-empty `results` array after the Worker runs.
 
-Important: Jamendo's API commercial-use terms may require a separate commercial agreement, including where the service is monetised. Obtain written approval before using it commercially. Each track's licence must also be checked. Do not assume every track can be redistributed.
+The scheduled daily shelf currently uses Deezer catalogue discovery. Jamendo remains an optional search source because track licences and API commercial-use terms must be checked before monetisation or redistribution.
 
-## Rights and product limits
-- Apple catalogue search and short previews are not a substitute for a full music streaming licence.
-- Full-track playback opens the provider's own page; NEXORA does not bypass subscriptions, ads, DRM or regional restrictions.
-- Artwork is downloaded only when the user chooses; a website cannot silently change Android wallpaper.
-- Voice search uses the browser's Web Speech API and depends on browser/device support.
-- The assistant is a future stage; this build does not yet perform arbitrary phone actions or provide general AI reasoning.
+## Music rights and product limits
+- Metadata and short previews do not grant rights to stream full tracks.
+- Full listening opens the authorised provider page. NEXORA does not bypass subscriptions, advertisements, DRM or geographic restrictions.
+- Jamendo API commercial-use terms and individual track licences vary; obtain required permission before monetising or redistributing music.
+- Artwork is downloaded only at the user's request; check source terms and use it appropriately.
+- Voice search relies on browser Web Speech API and microphone permissions.
+- The music guide is a search helper, not a generative AI assistant.
+- A real AI assistant needs a model/API, server-side secret, usage controls and potentially paid usage.
+- A website cannot silently set Android wallpaper or control arbitrary phone settings.
