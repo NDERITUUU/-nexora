@@ -1,17 +1,7 @@
 {
-  "name": "NEXORA",
-  "short_name": "NEXORA",
-  "description": "Music discovery and personal assistant",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0b0b12",
-  "theme_color": "#0b0b12",
-  "icons": [
-    {
-      "src": "/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+ "id":"/","name":"NEXORA — Music Discovery","short_name":"NEXORA",
+ "description":"Discover music from Kenya, Africa and around the world.",
+ "start_url":"/","scope":"/","display":"standalone",
+ "background_color":"#0b0b12","theme_color":"#0b0b12",
+ "icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
