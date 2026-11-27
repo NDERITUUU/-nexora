@@ -1,0 +1,10 @@
+name = "nexora-daily-music"
+main = "workers/music-refresh.js"
+compatibility_date = "2026-11-27"
+
+[triggers]
+crons = ["37 4 * * *"]
+
+[[kv_namespaces]]
+binding = "NEXORA_KV"
+id = "REPLACE_WITH_YOUR_CLOUDFLARE_KV_NAMESPACE_ID"
