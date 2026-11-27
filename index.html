@@ -1,141 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b0b12">
-<meta name="description" content="NEXORA — music discovery, artwork and your personal assistant.">
-<title>NEXORA — Music discovery</title>
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" type="image/svg+xml" href="/icon.svg">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b12"><meta name="description" content="NEXORA — discover music from Kenya, Africa and the world. Explore daily picks, previews and artist artwork.">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>NEXORA — Your world, in sound</title><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg" type="image/svg+xml">
 <style>
-:root{--bg:#0b0b12;--panel:#171725;--card:#1d1b31;--text:#f5f5fa;--muted:#a4a2b8;--accent:#8b70ff;--cyan:#22d3ee;--line:#302d48}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(900px 500px at 50% -10%,#241b4a,var(--bg) 65%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-header{max-width:900px;margin:auto;padding:20px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;letter-spacing:.16em;display:flex;gap:10px;align-items:center}.mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--cyan));color:#0b0b12;display:grid;place-items:center}.badge{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:30px;padding:6px 10px}
-main{max-width:900px;margin:auto;padding:24px 20px 50px}.hero{text-align:center;padding:28px 0}.hero h1{font-size:clamp(30px,6vw,48px);line-height:1.08;margin:0 0 14px}.gradient{background:linear-gradient(120deg,var(--accent),var(--cyan));background-clip:text;color:transparent}.hero p{max-width:560px;margin:auto;color:var(--muted);line-height:1.6}
-.search{display:flex;gap:9px;margin:26px auto 10px;max-width:650px;padding:9px;background:var(--panel);border:1px solid var(--line);border-radius:16px}.search input{min-width:0;flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:16px;padding:8px}.search button,.action{border:0;border-radius:11px;padding:11px 15px;background:linear-gradient(120deg,var(--accent),#5e9cff);color:white;font-weight:700;cursor:pointer}.search .mic{padding:10px 13px;background:#28253c}.hint,#message{font-size:12px;color:var(--muted);text-align:center;min-height:20px}
-h2{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:32px 0 14px}
-/* UPDATED SHELF STYLES FOR CLICKING */
-.shelves{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.shelf{background:linear-gradient(150deg,#211d3c,#171522);border:1px solid var(--line);border-radius:15px;padding:17px;cursor:pointer;transition:all 0.15s ease}
-.shelf:active{transform:scale(0.96);border-color:var(--accent);background:linear-gradient(150deg,#2a254d,#1d1a2e)}
-.shelf b{font-size:14px}.shelf p{font-size:12px;color:var(--muted);margin:7px 0 0;line-height:1.4}
-.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:13px}.track{overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:15px}.track img{width:100%;aspect-ratio:1;object-fit:cover;background:#242238;cursor:pointer;transition:opacity 0.2s}.track img:active{opacity:0.7}.track-body{padding:12px}.track h3{font-size:14px;margin:0 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track p{font-size:12px;color:var(--muted);margin:0 0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track a{display:inline-block;color:#c7bcff;font-size:12px;text-decoration:none;margin:4px 10px 2px 0}.track audio{width:100%;height:34px;margin-top:8px}.status{margin-top:30px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;color:var(--muted);font-size:12px;line-height:1.6}.status strong{color:var(--text)}footer{text-align:center;padding:22px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)}
-@media(min-width:600px){.shelves{grid-template-columns:repeat(3,1fr)}}
-#installBanner{position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--accent);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;z-index:1000;box-shadow:0 -5px 20px rgba(0,0,0,0.5);transform:translateY(100%);transition:transform 0.3s ease-in-out}#installBanner.show{transform:translateY(0)}#installBanner .text{font-size:14px;font-weight:600}#installBanner .subtext{font-size:11px;color:var(--muted);margin-top:4px}#installBanner .actions{display:flex;gap:10px}#installBanner button{padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;border:none}#installBtn{background:var(--accent);color:white}#dismissBtn{background:transparent;color:var(--muted)}
-#wallpaperModal{position:fixed;inset:0;background:rgba(11,11,18,0.95);backdrop-filter:blur(5px);z-index:2000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity 0.3s}#wallpaperModal.show{display:flex;opacity:1}#wallpaperModal img{max-width:100%;max-height:60vh;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.5);margin-bottom:20px;object-fit:contain}#wallpaperModal .modal-actions{display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px}#wallpaperModal a.btn-download{display:block;text-align:center;background:var(--accent);color:white;text-decoration:none;padding:14px;border-radius:12px;font-weight:700}#wallpaperModal button.btn-close{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:14px;border-radius:12px;font-weight:700;cursor:pointer}#wallpaperModal .instructions{color:var(--muted);font-size:12px;text-align:center;margin-top:10px;line-height:1.5}
+:root{color-scheme:dark;--bg:#0b0b12;--panel:#151522;--card:#1c1a2d;--line:#302d48;--text:#f7f6ff;--muted:#aaa7bd;--purple:#987bff;--cyan:#42d8e9}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(800px 430px at 50% -8%,#30215b 0,transparent 70%),var(--bg);color:var(--text);font:15px system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+header,main,footer{width:min(100% - 32px,960px);margin:auto}header{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:.17em}.mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--cyan));display:grid;place-items:center;color:#0b0b12;font-size:20px}.pill{border:1px solid var(--line);border-radius:30px;padding:7px 11px;color:var(--muted);font-size:11px}
+.hero{text-align:center;padding:45px 0 24px}.hero h1{font-size:clamp(35px,8vw,62px);line-height:1.02;letter-spacing:-.045em;margin:0 0 15px}.gradient{background:linear-gradient(100deg,#b69cff,var(--cyan));background-clip:text;color:transparent}.hero p{max-width:570px;margin:auto;color:var(--muted);line-height:1.65}
+.search{display:flex;gap:8px;max-width:680px;margin:27px auto 9px;padding:8px;background:#171625;border:1px solid var(--line);border-radius:17px}.search input{min-width:0;flex:1;background:transparent;border:0;outline:0;color:white;padding:10px;font-size:16px}.btn{border:0;border-radius:12px;background:linear-gradient(120deg,var(--purple),#5d9fff);color:white;font-weight:750;padding:12px 16px;cursor:pointer}.btn.secondary{background:#29263e}.hint,#message{font-size:12px;color:var(--muted);min-height:19px;text-align:center}
+section{margin:35px 0} .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px}h2{font-size:13px;text-transform:uppercase;letter-spacing:.13em;color:#c3bfd5;margin:0 0 14px}.muted{color:var(--muted);font-size:12px}
+.shelves{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.shelf{cursor:pointer;text-align:left;padding:17px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#211d3c,#171522);color:var(--text);min-height:98px}.shelf:active{transform:scale(.98);border-color:var(--purple)}.shelf b{display:block;font-size:14px}.shelf span{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:6px}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.track{overflow:hidden;border:1px solid var(--line);border-radius:15px;background:var(--panel);min-width:0}.cover{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#25223b;cursor:zoom-in}.track-body{padding:11px}.track h3{font-size:13px;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track p{font-size:11px;color:var(--muted);margin:0 0 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track a{color:#cbbfff;font-size:11px;text-decoration:none;margin-right:9px}.track audio{width:100%;height:34px;margin-top:9px}.empty{grid-column:1/-1;text-align:center;padding:22px;color:var(--muted);background:var(--panel);border-radius:14px}
+#dailyPicks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.daily-card{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);background:var(--panel);border-radius:13px;min-width:0}.daily-card img{width:64px;height:64px;object-fit:cover;border-radius:9px;background:#29263e}.daily-card div{min-width:0}.daily-card b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.daily-card small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:16px;color:var(--muted);font-size:12px;line-height:1.65}.guide-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.guide-actions button{border:1px solid var(--line);background:#242139;color:#e7e2ff;border-radius:30px;padding:8px 12px;font-size:12px}
+footer{text-align:center;border-top:1px solid var(--line);padding:25px 0 35px;color:var(--muted);font-size:11px}
+#installBanner{position:fixed;bottom:12px;left:12px;right:12px;max-width:600px;margin:auto;background:#201d34;border:1px solid var(--purple);border-radius:16px;padding:14px;display:none;align-items:center;justify-content:space-between;gap:12px;z-index:10;box-shadow:0 10px 35px #0009}#installBanner.show{display:flex}.install-copy b{font-size:13px}.install-copy small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+#wallpaperModal{position:fixed;inset:0;background:#080810f2;z-index:20;display:none;align-items:center;justify-content:center;flex-direction:column;padding:20px}#wallpaperModal.show{display:flex}#wallpaperModal img{max-width:100%;max-height:65vh;object-fit:contain;border-radius:12px;margin-bottom:15px}#wallpaperModal a{color:white;background:var(--purple);padding:13px 20px;border-radius:11px;text-decoration:none;font-weight:700}#wallpaperModal button{margin-top:10px;background:#29263e;color:white;border:1px solid var(--line);padding:12px 20px;border-radius:11px}
+@media(min-width:620px){.shelves{grid-template-columns:repeat(3,1fr)}.results{grid-template-columns:repeat(4,minmax(0,1fr))}#dailyPicks{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-
-<div id="installBanner">
-  <div><div class="text">Install NEXORA</div><div class="subtext">Add to home screen for the app experience.</div></div>
-  <div class="actions"><button id="dismissBtn">Not now</button><button id="installBtn">Install</button></div>
-</div>
-
-<div id="wallpaperModal">
-  <img id="modalImage" src="" alt="Album Artwork">
-  <div class="modal-actions">
-    <a id="modalDownload" class="btn-download" href="#" target="_blank" download="nexora-artwork.jpg">Download Image</a>
-    <button id="modalClose" class="btn-close">Close</button>
-  </div>
-  <div class="instructions"><strong>Android Tip:</strong> Tap "Download Image". Then open your phone's Gallery or Photos app, open the image, tap the 3 dots, and select "Set as wallpaper".</div>
-</div>
-
-<header><div class="brand"><div class="mark">N</div>NEXORA</div><div class="badge">MUSIC DISCOVERY · 0.2</div></header>
+<header><div class="brand"><div class="mark">N</div>NEXORA</div><div class="pill">DISCOVER · LISTEN · EXPLORE</div></header>
 <main>
-<section class="hero">
-<h1>Music discovery.<br><span class="gradient">Your world, in sound.</span></h1>
-<p>Find music from around the world, explore independent artists and discover artwork — all from one phone-friendly place.</p>
-<form class="search" id="searchForm"><input id="searchInput" type="search" placeholder="Search songs, artists, albums…" aria-label="Search music" required><button type="submit">Search</button><button class="mic" id="micBtn" type="button" aria-label="Voice search">🎙</button></form>
-<div class="hint">Try an artist, song title or genre. Voice search depends on browser support.</div>
-<div id="message" role="status" aria-live="polite"></div>
-</section>
-<section id="resultsSection" hidden><h2>Search results</h2><div class="results" id="results"></div></section>
-<section><h2>Explore NEXORA</h2><div class="shelves">
-<!-- UPDATED SHELVES WITH IDs/DATA -->
-<div class="shelf" data-search="Afrobeats"><b>African & Kenyan</b><p>Discover Afrobeats and East African artists.</p></div>
-<div class="shelf" data-search="Indie"><b>Independent</b><p>Explore independent releases and emerging artists.</p></div>
-<div class="shelf" data-search="Top Hits"><b>International</b><p>Search a global music catalogue.</p></div>
-<div class="shelf" data-search="Burna Boy"><b>Artwork</b><p>Find cover art and save it to your device.</p></div>
-<div class="shelf" id="voiceShelf"><b>Voice</b><p>Search by speaking when your browser supports it.</p></div>
-<div class="shelf" id="assistantShelf"><b>Assistant</b><p>Personal assistant features are planned for later builds.</p></div>
+<section class="hero"><h1>Your world,<br><span class="gradient">in sound.</span></h1><p>Discover Kenyan, African and international music. Explore new artists, preview tracks and save the artwork you love.</p>
+<form class="search" id="searchForm"><input id="searchInput" type="search" placeholder="Song, artist or genre…" aria-label="Search music" required maxlength="100"><button class="btn" type="submit">Search</button><button class="btn secondary" id="micBtn" type="button" aria-label="Voice search">🎙</button></form>
+<div class="hint">Search across available music catalogues. Preview availability depends on the provider.</div><div id="message" role="status" aria-live="polite"></div></section>
+<section id="resultsSection" hidden><div class="section-head"><h2>Search results</h2><span class="muted" id="resultCount"></span></div><div class="results" id="results"></div></section>
+<section><div class="section-head"><h2>Today on NEXORA</h2><button class="muted" id="refreshDaily" style="background:none;border:0;color:#cbbfff">Refresh</button></div><div id="dailyPicks"><div class="empty">Loading today's discoveries…</div></div><p class="muted" id="dailyNote"></p></section>
+<section><h2>Explore by mood & sound</h2><div class="shelves">
+<button class="shelf" data-search="Kenyan music"><b>🇰🇪 Kenya & East Africa</b><span>Kenyan sounds, gengetone, bongo and more.</span></button>
+<button class="shelf" data-search="Afrobeats"><b>🌍 Afrobeats</b><span>Fresh African rhythms and global hits.</span></button>
+<button class="shelf" data-search="Hip hop"><b>🎧 Hip-hop</b><span>Rap, drill and hip-hop discoveries.</span></button>
+<button class="shelf" data-search="R&B"><b>💜 R&B</b><span>Soulful sounds and slow jams.</span></button>
+<button class="shelf" data-search="Gospel"><b>✨ Gospel</b><span>Uplifting music from different places.</span></button>
+<button class="shelf" data-search="Pop hits"><b>⚡ Global pop</b><span>Popular sounds from around the world.</span></button>
 </div></section>
-<div class="status"><strong>Current build:</strong> Live catalogue search, artwork, and available preview clips. Full listening opens the music provider. NEXORA does not bypass ads, subscriptions, DRM or regional restrictions. Wallpaper images must be saved and set by you; websites cannot silently change Android wallpaper.</div>
+<section><h2>NEXORA music guide</h2><div class="panel">Not sure what to search? Choose a direction and NEXORA will find music in that style. This is a music-discovery helper, not an AI assistant or a controller for your phone.
+<div class="guide-actions"><button data-search="Feel good Afrobeats">I want feel-good music</button><button data-search="Chill R&B">Something relaxing</button><button data-search="New Kenyan music">Discover Kenyan artists</button><button data-search="Workout hip hop">Workout music</button></div></div></section>
+<section class="panel"><b style="color:white">Listening & music rights</b><br>NEXORA provides catalogue discovery and short previews where available. Full listening opens the provider's authorised page. NEXORA does not bypass subscriptions, advertisements, DRM or regional restrictions. Track availability and licences are controlled by each provider. Artwork can be downloaded for personal use where permitted; set your wallpaper manually in your phone's Gallery.</section>
 </main>
-<footer>NEXORA © 2026 · Built for phones · Music discovery first</footer>
+<footer>NEXORA © 2026 · Made for discovery · <span id="connectionStatus">Connecting…</span></footer>
+<div id="installBanner"><div class="install-copy"><b>Install NEXORA</b><small>Put your music discovery space on your home screen.</small></div><div><button id="dismissBtn" class="btn secondary">Later</button> <button id="installBtn" class="btn">Install</button></div></div>
+<div id="wallpaperModal"><img id="modalImage" alt="Artwork preview"><a id="modalDownload" href="#" target="_blank" rel="noopener">Download artwork</a><button id="modalClose">Close</button><p class="muted">After downloading, open Gallery → image → menu → Set as wallpaper.</p></div>
 <script>
-const form=document.getElementById('searchForm'),input=document.getElementById('searchInput'),message=document.getElementById('message'),resultsBox=document.getElementById('results'),section=document.getElementById('resultsSection');
-const modal=document.getElementById('wallpaperModal'), modalImg=document.getElementById('modalImage'), modalDownload=document.getElementById('modalDownload'), modalClose=document.getElementById('modalClose');
-
-function openWallpaper(url) {
-  if(!url) return;
-  modalImg.src = url;
-  modalDownload.href = url;
-  modal.classList.add('show');
-}
-modalClose.addEventListener('click', () => { modal.classList.remove('show'); modalImg.src = ''; });
-
-function render(items){
- resultsBox.innerHTML='';
- if(!items.length){message.textContent='No results found. Try another artist or song.';section.hidden=true;return;}
- section.hidden=false;
- for(const t of items){
-  const card=document.createElement('article');card.className='track';
-  const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=t.artwork||'';
-  if(t.artwork) { img.addEventListener('click', () => openWallpaper(t.artwork)); }
-  const body=document.createElement('div');body.className='track-body';
-  const title=document.createElement('h3');title.textContent=t.title||'Untitled';
-  const artist=document.createElement('p');artist.textContent=(t.artist||'Unknown artist')+(t.album?' · '+t.album:'');
-  body.append(title,artist);
-  const link=document.createElement('a');link.href=t.providerUrl||'#';link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open provider ↗';body.append(link);
-  if(t.preview){const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=t.preview;audio.setAttribute('aria-label','Preview '+(t.title||'track'));body.append(audio);}
-  if(t.license){const lic=document.createElement('a');lic.href=t.license;lic.target='_blank';lic.rel='noopener noreferrer';lic.textContent='Track licence';body.append(lic);}
-  card.append(img,body);resultsBox.append(card);
- }
-}
-form.addEventListener('submit',async e=>{
- e.preventDefault();const q=input.value.trim();if(!q)return;
- message.textContent='Searching music catalogues…';section.hidden=true;resultsBox.innerHTML='';
- try{const r=await fetch('/api/music/search?q='+encodeURIComponent(q));const data=await r.json();if(!r.ok)throw new Error(data.error||'Search is temporarily unavailable.');render(data.results||[]);if(data.results?.length)message.textContent=data.count+' results found.';}
- catch(err){message.textContent=err.message||'Search failed. Please try again.';}
-});
-document.getElementById('micBtn').addEventListener('click',()=>{
- const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!Speech){message.textContent='Voice search is not supported in this browser. Type your search instead.';return;}
- const recognition=new Speech();recognition.lang=navigator.language||'en-US';recognition.interimResults=false;
- message.textContent='Listening…';recognition.onresult=e=>{input.value=e.results[0][0].transcript;form.requestSubmit();};recognition.onerror=()=>message.textContent='Voice search could not start. Check microphone permission.';recognition.onend=()=>{if(message.textContent==='Listening…')message.textContent='';};recognition.start();
-});
-
-// --- NEW SHELF CLICK LOGIC ---
-document.querySelectorAll('.shelf').forEach(card => {
-  card.addEventListener('click', () => {
-    const searchTerm = card.getAttribute('data-search');
-    if (searchTerm) {
-      input.value = searchTerm;
-      form.requestSubmit(); // Automatically triggers the search
-      // Scroll down smoothly to show results
-      setTimeout(() => { window.scrollTo({ top: section.offsetTop - 20, behavior: 'smooth' }); }, 100);
-    } else if (card.id === 'voiceShelf') {
-      document.getElementById('micBtn').click();
-    } else if (card.id === 'assistantShelf') {
-      message.textContent = "The AI Assistant is coming in a future update!";
-      setTimeout(() => { message.textContent = ""; }, 3000);
-    }
-  });
-});
-
-// --- PWA INSTALL BANNER LOGIC ---
-let deferredPrompt;
-const banner = document.getElementById('installBanner');
-const installBtn = document.getElementById('installBtn');
-const dismissBtn = document.getElementById('dismissBtn');
-if (window.matchMedia('(display-mode: standalone)').matches) { banner.style.display = 'none'; }
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; setTimeout(() => { banner.classList.add('show'); }, 3000); });
-installBtn.addEventListener('click', async () => { if (deferredPrompt) { banner.classList.remove('show'); deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; } });
-dismissBtn.addEventListener('click', () => { banner.classList.remove('show'); });
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed', err)); }); }
+const $=id=>document.getElementById(id),form=$('searchForm'),input=$('searchInput'),message=$('message'),results=$('results'),section=$('resultsSection');
+function safeUrl(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}}
+function openArtwork(url){const safe=safeUrl(url);if(!safe)return;$('modalImage').src=safe;$('modalDownload').href=safe;$('wallpaperModal').classList.add('show')}
+$('modalClose').onclick=()=>$('wallpaperModal').classList.remove('show');
+function render(items){results.replaceChildren();section.hidden=false;$('resultCount').textContent=items.length+' found';if(!items.length){results.innerHTML='<div class="empty">No tracks found. Try a different artist, song or genre.</div>';return}
+for(const t of items){const card=document.createElement('article');card.className='track';const img=document.createElement('img');img.className='cover';img.loading='lazy';img.alt='Album artwork';img.src=safeUrl(t.artwork)||'/icon.svg';img.addEventListener('click',()=>openArtwork(t.artwork));const body=document.createElement('div');body.className='track-body';const title=document.createElement('h3');title.textContent=t.title||'Untitled';const artist=document.createElement('p');artist.textContent=(t.artist||'Unknown artist')+(t.album?' · '+t.album:'');body.append(title,artist);const link=document.createElement('a');link.href=safeUrl(t.providerUrl)||'#';link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open provider ↗';body.append(link);if(t.preview){const audio=document.createElement('audio');audio.controls=true;audio.preload='none';audio.src=safeUrl(t.preview);audio.setAttribute('aria-label','Preview '+(t.title||'track'));body.append(audio)}if(t.license){const lic=document.createElement('a');lic.href=safeUrl(t.license)||'#';lic.target='_blank';lic.rel='noopener noreferrer';lic.textContent='Licence';body.append(lic)}card.append(img,body);results.append(card)}}
+async function search(q){q=(q||'').trim();if(!q)return;input.value=q;message.textContent='Searching music catalogues…';section.hidden=true;try{const response=await fetch('/api/music/search?q='+encodeURIComponent(q));const data=await response.json();if(!response.ok)throw Error(data.error||'Search is temporarily unavailable.');render(data.results||[]);message.textContent=data.count+' results · '+(data.cached?'cached':'live catalogue');}catch(e){message.textContent=e.message||'Search failed. Please try again.'}}
+form.addEventListener('submit',e=>{e.preventDefault();search(input.value)});
+document.querySelectorAll('[data-search]').forEach(el=>el.addEventListener('click',()=>{search(el.dataset.search);window.scrollTo({top:0,behavior:'smooth'})}));
+async function loadDaily(){const box=$('dailyPicks');box.innerHTML='<div class="empty">Finding today's music…</div>';try{const r=await fetch('/api/music/discover');const d=await r.json();const items=d.results||[];box.replaceChildren();if(!items.length){box.innerHTML='<div class="empty">Daily picks will appear after the scheduled music refresh is connected. You can search the catalogue above right now.</div>';$('dailyNote').textContent=d.message||'Daily discovery setup is pending.';return}for(const t of items.slice(0,9)){const card=document.createElement('div');card.className='daily-card';const img=document.createElement('img');img.loading='lazy';img.alt='';img.src=safeUrl(t.artwork)||'/icon.svg';const info=document.createElement('div');const b=document.createElement('b');b.textContent=t.title||'Untitled';const small=document.createElement('small');small.textContent=t.artist||'Artist';info.append(b,small);card.append(img,info);card.addEventListener('click',()=>search(t.artist||t.title));box.append(card)}$('dailyNote').textContent=d.updatedAt?'Updated '+new Date(d.updatedAt).toLocaleString():'Daily selection';}catch{$('dailyPicks').innerHTML='<div class="empty">Daily picks are not connected yet. Search music above.</div>';$('dailyNote').textContent=''}}
+$('refreshDaily').onclick=loadDaily;loadDaily();
+$('micBtn').onclick=()=>{const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Speech){message.textContent='Voice search is not supported in this browser. Type your search instead.';return}const rec=new Speech();rec.lang=navigator.language||'en-US';rec.onstart=()=>message.textContent='Listening…';rec.onresult=e=>search(e.results[0][0].transcript);rec.onerror=()=>message.textContent='Microphone unavailable. Check browser permission.';rec.start()};
+let deferredPrompt;const banner=$('installBanner');if(window.matchMedia('(display-mode: standalone)').matches)banner.style.display='none';window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;banner.classList.add('show')});$('installBtn').onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;banner.classList.remove('show')};$('dismissBtn').onclick=()=>banner.classList.remove('show');
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').then(()=>$('connectionStatus').textContent='Ready').catch(()=>$('connectionStatus').textContent='Online mode'));
 </script>
-</body>
-</html>
+</body></html>
